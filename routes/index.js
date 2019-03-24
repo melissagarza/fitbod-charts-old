@@ -5,14 +5,14 @@ let fs = require('fs');
 let csvParse = require('csv-parse');
 
 router.get('/', function(req, res) {
-  let data = processData(res);
+  let data = processData();
   res.render('index', {
     title: 'Fitbod Charts',
     data: JSON.stringify(data)
   });
 });
 
-function processData(res) {
+function processData() {
   let fitbodData = [];
   let csvParser = csvParse({
     delimiter: ',',
@@ -41,10 +41,7 @@ function processData(res) {
     console.log(fitbodData);
   })
 
-  csvParser.write('"Date","Exercise","Sets","Reps","Weight","isWarmup","Note"\n')
-  csvParser.write('"2019-01-27","Dumbbell Pullover",1,12,17,"",""')
-
-  csvParser.end()
+  fs.createReadStream(path.join(__dirname, '../public/data/fitbod_workout.csv')).pipe(csvParser);
 
   return fitbodData;
 }
