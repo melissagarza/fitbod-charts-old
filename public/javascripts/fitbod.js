@@ -1,5 +1,5 @@
-var parseDate = d3.timeParse('%Y-%m-%d');
+let parseDate = d3.timeParse('%Y-%m-%d');
 
-var fitbod = function(data) {
+let fitbod = function(data) {
   console.log(data);
 };
