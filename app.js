@@ -1,13 +1,13 @@
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
-let sassMiddleware = require('node-sass-middleware');
+const express = require('express');
+const path = require('path');
+const createError = require('http-errors');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const sassMiddleware = require('node-sass-middleware');
 
-let indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 
-let app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(sassMiddleware({
-  src: path.join(__dirname, 'public'),
+  src: __dirname,
   dest: path.join(__dirname, 'public'),
   indentedSyntax: false, // true = .sass and false = .scss
   sourceMap: true
@@ -42,5 +42,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.listen(3000);
 
 module.exports = app;
