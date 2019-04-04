@@ -1,31 +1,65 @@
 'use strict';
 
+const path = require('path');
 const gulp = require('gulp');
+const sourcemaps = require('gulp-sourcemaps');
 const terser = require('gulp-terser');
+const postcss = require('gulp-postcss');
 const sass = require('gulp-sass');
+const cssnano = require('cssnano');
+const autoprefixer = require('autoprefixer');
+
+const pathPublic = './public';
+const pathJavaScript = './javascript';
+const pathScss = './scss';
+const pathData = './data';
 
 gulp.task('default', (done) => {
   console.log('GULP TASKS');
-  console.log('terser : Minify JavaScript files');
-  console.log('scss : Precompile scss into css');
+  console.log('compile : Minifies JavaScript files and compiles/minifies SCSS into CSS');
+  console.log('debug : Copies over JavaScript files and compiles SCSS into CSS');
   done();
 });
 
-gulp.task('terser', (done) => {
-  gulp.src('./javascript/*.js')
+gulp.task('copy-javascript', (done) => {
+  gulp.src(path.join(pathJavaScript, '*.js'))
+    .pipe(gulp.dest(path.join(pathPublic, 'js')));
+  done();
+});
+
+gulp.task('minify-javascript', (done) => {
+  gulp.src(path.join(pathJavaScript, '*.js'))
     .pipe(terser())
-    .pipe(gulp.dest('./public/js'));
+    .pipe(gulp.dest(path.join(pathPublic, 'js')));
   done();
 });
 
 sass.compiler = require('node-sass');
-gulp.task('scss', (done) => {
-  gulp.src('./scss/**/*.scss')
+gulp.task('compile-scss', (done) => {
+  gulp.src(path.join(pathScss, '**/*.scss'))
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./public/css'));
-});
-
-gulp.task('scss:watch', (done) => {
-  gulp.watch('./scss/**/*.scss', ['scss']);
+    .pipe(gulp.dest(path.join(pathPublic, 'css')));
   done();
 });
+
+gulp.task('minify-css', gulp.series('compile-scss', (done) => {
+  const plugins = [
+    autoprefixer({ browsers: ['last 1 version'] }),
+    cssnano
+  ];
+  gulp.src(path.join(pathScss, '**/*.scss'))
+    .pipe(sourcemaps.init())
+    .pipe(postcss(plugins))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(path.join(pathPublic, 'css')));
+  done();
+}));
+
+gulp.task('copy-data', (done) => {
+  gulp.src(path.join(pathData, '*.csv'))
+    .pipe(gulp.dest(path.join(pathPublic, 'data')));
+  done();
+});
+
+gulp.task('compile', gulp.series('minify-javascript', 'minify-css', 'copy-data'), (done) => { done(); });
+gulp.task('debug', gulp.series('copy-javascript', 'compile-scss', 'copy-data'), (done) => { done(); });
