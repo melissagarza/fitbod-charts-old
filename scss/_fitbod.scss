@@ -3,9 +3,19 @@
   width: 75%;
   margin: auto;
   border: 1px solid black;
-}
 
-path.graph-1 {
-  fill: #ff6e60;
-  stroke: #ff6e60;
+  .fitbod-svg {
+
+    .fitbod-group {
+
+      .fitbod-graph {
+        fill: #ff6e60;
+        stroke: #ff6e60;
+      }
+
+      .fitbod-point {
+        fill: #330000;
+      }
+    }
+  }
 }
