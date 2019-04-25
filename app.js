@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
+const serveFavicon = require ('serve-favicon');
 
 const indexRouter = require('./routes/index');
 
@@ -24,6 +25,7 @@ app.use(sassMiddleware({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(serveFavicon(path.join(__dirname, 'public', 'img/favicon.ico')))
 
 app.use('/', indexRouter);
 

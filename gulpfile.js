@@ -13,6 +13,7 @@ const pathPublic = './public';
 const pathJavaScript = './javascript';
 const pathScss = './scss';
 const pathData = './data';
+const pathImages = './images';
 
 gulp.task('default', (done) => {
   console.log('GULP TASKS');
@@ -61,5 +62,11 @@ gulp.task('copy-data', (done) => {
   done();
 });
 
-gulp.task('compile', gulp.series('minify-javascript', 'minify-css', 'copy-data'), (done) => { done(); });
-gulp.task('debug', gulp.series('copy-javascript', 'compile-scss', 'copy-data'), (done) => { done(); });
+gulp.task('copy-favicon', (done) => {
+  gulp.src(path.join(pathImages, 'favicon.ico'))
+    .pipe(gulp.dest(path.join(pathPublic, 'img')));
+  done();
+});
+
+gulp.task('compile', gulp.series('minify-javascript', 'minify-css', 'copy-data', 'copy-favicon'), (done) => { done(); });
+gulp.task('debug', gulp.series('copy-javascript', 'compile-scss', 'copy-data', 'copy-favicon'), (done) => { done(); });
