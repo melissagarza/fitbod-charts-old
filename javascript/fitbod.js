@@ -1,6 +1,12 @@
 const width = 800;
 const height = 400;
 const parseDate = d3.timeParse('%Y-%m-%d');
+const chartPadding = {
+  top: 50,
+  right: 50,
+  bottom: 20,
+  left: 40
+};
 
 let fitbod = (data) => {
 
@@ -10,19 +16,14 @@ let fitbod = (data) => {
   _.each(exercises, (exercise, i) => {
     let dataExercise = dataWorkout[exercise];
 
-    const svg = d3.select('.fitbod-container').append('svg')
-      .attr('class', 'fitbod-svg svg-' + i)
-      .attr('xmlns', 'http://www.w3.org/2000/svg')
-      .attr('viewBox', '0 0 ' + width + ' ' + height)
-      .attr('preserveAspectRatio', 'none');
-
-    const group = svg.append('g')
-      .attr('class', 'fitbod-group group-' + i);
-
     let dates = _.keys(dataExercise);
     const scaleX = d3.scaleTime()
       .domain(d3.extent(dates, (date) => {return parseDate(date)}))
       .range([0, width]);
+
+    const axisX = d3.axisBottom(scaleX)
+      .tickFormat(d3.timeFormat('%y-%m-%d'))
+      .ticks(d3.timeMonth.every(1));
 
     let recordWithMaxVolume = _.max(dataExercise, (recordsByDate) => {
       let volume = _.reduce(recordsByDate, (memo, record) => {
@@ -34,8 +35,11 @@ let fitbod = (data) => {
       return memo + record.volume;
     }, 0);
     const scaleY = d3.scaleLinear()
-    .domain([0, maxVolume])
+    .domain([0, maxVolume + (maxVolume * 0.1)])
     .range([height, 0]);
+
+    const axisY = d3.axisLeft(scaleY)
+      .ticks(10);
 
     const generatorArea = d3.area()
       .x((d) => {
@@ -49,11 +53,55 @@ let fitbod = (data) => {
         return scaleY(volume);
       });
 
-    group.append('path')
-      .attr('class', 'fitbod-graph graph-' + i)
+      const generatorLine = d3.area()
+        .x((d) => {
+          return scaleX(parseDate(d));
+        })
+        .y((d) => {
+          let volume = _.reduce(dataExercise[d], (memo, record) => {
+            return memo + record.volume;
+          }, 0);
+          return scaleY(volume);
+        });
+
+    const fitbodSvgWrapper = d3.select('.fitbod-container')
+      .append('div')
+      .attr('class', 'fitbod-svg-wrapper');
+
+    fitbodSvgWrapper.append('h3')
+      .attr('class', 'fitbod-title')
+      .text(exercise);
+
+    const fitbodSvg = fitbodSvgWrapper.append('svg')
+      .attr('class', 'fitbod-svg')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .attr('viewBox', '0 0 ' + width + ' ' + height)
+      .attr('preserveAspectRatio', 'none');
+
+    const groupMain = fitbodSvg.append('g')
+      .attr('class', 'fitbod-group-main');
+
+    const groupChart = groupMain.append('g')
+      .attr('class', 'fitbod-group-chart')
+      .attr('transform', 'translate(' + chartPadding.left + ', 0)scale(0.95)');
+
+    const groupAxisX = groupMain.append('g')
+      .attr('class', 'fitbod-group-axis-x')
+      .attr('transform', 'translate(' + chartPadding.left + ', ' + (height - chartPadding.bottom) + ')');
+
+    const groupAxisY = groupMain.append('g')
+      .attr('class', 'fitbod-group-axis-y')
+      .attr('transform', 'translate(' + chartPadding.left + ', -' + chartPadding.bottom + ')');
+
+    groupChart.append('path')
+      .attr('class', 'fitbod-area')
       .attr('d', generatorArea(dates));
 
-    group.selectAll('circle.fitbod-point')
+    groupChart.append('path')
+      .attr('class', 'fitbod-line')
+      .attr('d', generatorLine(dates));
+
+    groupChart.selectAll('circle.fitbod-point')
       .data(dates)
       .enter()
       .append('circle')
@@ -68,6 +116,12 @@ let fitbod = (data) => {
         return scaleY(volume);
       })
       .attr('r', '3');
+
+    groupAxisX.append('g')
+      .call(axisX);
+  
+    groupAxisY.append('g')
+      .call(axisY);
   });
 };
 

@@ -1,20 +1,42 @@
 .fitbod-container {
-  position: relative;
-  width: 75%;
-  margin: auto;
-  border: 1px solid black;
 
-  .fitbod-svg {
+  .fitbod-svg-wrapper {
+    margin-bottom: 50px;
+    border: 1px solid $colorFitbodBlack;
 
-    .fitbod-group {
+    .fitbod-title {
+      font-size: 30px;
+      font-weight: 700;
+      margin-left: 60px;
+    }
+    
+    .fitbod-svg {
+  
+      .fitbod-group-main {
+  
+        .fitbod-group-chart {
+  
+          .fitbod-area {
+            fill: $colorFitbod;
+            stroke: $colorFitbod;
+          }
 
-      .fitbod-graph {
-        fill: #ff6e60;
-        stroke: #ff6e60;
-      }
-
-      .fitbod-point {
-        fill: #330000;
+          .fitbod-line {
+            stroke: $colorFitbodDarkened;
+          }
+    
+          .fitbod-point {
+            fill: $colorFitbodBlack;
+          }
+        }
+  
+        .fitbod-group-axis-x {
+  
+        }
+  
+        .fitbod-group-axis-y {
+  
+        }
       }
     }
   }
