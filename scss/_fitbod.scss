@@ -18,11 +18,11 @@
   
           .fitbod-area {
             fill: $colorFitbod;
-            stroke: $colorFitbod;
           }
 
           .fitbod-line {
             stroke: $colorFitbodDarkened;
+            stroke-width: 2px;
           }
     
           .fitbod-point {

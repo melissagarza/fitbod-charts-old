@@ -79,11 +79,12 @@ let fitbod = (data) => {
       .attr('preserveAspectRatio', 'none');
 
     const groupMain = fitbodSvg.append('g')
-      .attr('class', 'fitbod-group-main');
+      .attr('class', 'fitbod-group-main')
+      .attr('transform', 'scale(0.95)');
 
     const groupChart = groupMain.append('g')
       .attr('class', 'fitbod-group-chart')
-      .attr('transform', 'translate(' + chartPadding.left + ', 0)scale(0.95)');
+      .attr('transform', 'translate(' + chartPadding.left + ', -' + chartPadding.bottom + ')');
 
     const groupAxisX = groupMain.append('g')
       .attr('class', 'fitbod-group-axis-x')
